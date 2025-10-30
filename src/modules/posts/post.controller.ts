@@ -29,7 +29,10 @@ const updatePost = handleAsync(
 
 const getPosts = handleAsync(
     async (req: Request, res: Response) => {
-        const data = await postService.getPosts();
+        const { limit, page } = req.query;
+        const numLimit = Number(limit);
+        const numPage = Number(page);
+        const data = await postService.getPosts({ numLimit, numPage });
 
         res.status(200).json({
             data: data,

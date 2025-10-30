@@ -10,8 +10,8 @@ const updatePost = async ({ id, payload }: { id: string, payload: any }) => {
     return result;
 }
 
-const getPosts = async () => {
-    const result = await Post.find();
+const getPosts = async ({ numLimit, numPage }: { numLimit: number, numPage: number }) => {
+    const result = await Post.find().skip((numPage - 1) * numLimit).limit(numLimit);
     return result;
 }
 

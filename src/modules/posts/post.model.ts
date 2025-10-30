@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const postSchema = new Schema({
     title: {
@@ -17,6 +17,10 @@ const postSchema = new Schema({
         type: String,
         required: true
     },
+    images:{
+        type: Types.ObjectId,
+        ref: "Image"
+    }
 });
 
 export const Post = model('Post', postSchema);
