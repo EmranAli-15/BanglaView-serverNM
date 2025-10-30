@@ -8,9 +8,8 @@ const imageSchema = new mongoose.Schema({
     postId: {
         type: Schema.ObjectId,
         required: true,
-        ref: "Post"
     }
 });
 
 
-export const Image = model("image", imageSchema)
+export const Image = model("Image", imageSchema)

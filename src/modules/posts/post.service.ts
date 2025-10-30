@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { Post } from "./post.model";
 import { Image } from "../images/image.model";
+import AppError from "../../errors/AppError";
 
 const createPost = async (payload: any) => {
-
     const { images, bannerimg, youtubelink, content, title } = payload;
 
     const session = await mongoose.startSession();
@@ -28,20 +28,21 @@ const createPost = async (payload: any) => {
                 postId: result[0]!._id
             }
         ));
-        console.log(imagesWithPostId)
         await Image.create(
-            [imagesWithPostId],
-            { session }
-        )
+            imagesWithPostId,
+            { session, ordered: true }
+        );
+
+        await session.commitTransaction();
+        return result
 
     } catch (error: any) {
         await session.abortTransaction();
-        
+        throw new AppError(500, "Post upload failed")
     }
     finally {
         session.endSession();
     }
-
 };
 
 const updatePost = async ({ id, payload }: { id: string, payload: any }) => {
@@ -55,7 +56,7 @@ const getPosts = async ({ numLimit, numPage }: { numLimit: number, numPage: numb
 }
 
 const getSinglePost = async (id: string) => {
-    const result = await Post.findById(id);
+    const result = await Post.findById(id).populate("images");
     return result;
 };
 

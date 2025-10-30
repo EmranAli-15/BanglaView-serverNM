@@ -16,11 +16,19 @@ const postSchema = new Schema({
     bannerimg: {
         type: String,
         required: true
-    },
-    images:{
-        type: Types.ObjectId,
-        ref: "Image"
     }
+},
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
+
+
+postSchema.virtual("images", {
+    ref: "Image",
+    localField: "_id",
+    foreignField: "postId"
 });
 
 export const Post = model('Post', postSchema);
