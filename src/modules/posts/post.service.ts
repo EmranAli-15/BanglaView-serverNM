@@ -1,8 +1,47 @@
+import mongoose from "mongoose";
 import { Post } from "./post.model";
+import { Image } from "../images/image.model";
 
 const createPost = async (payload: any) => {
-    const result = await Post.create(payload);
-    return result;
+
+    const { images, bannerimg, youtubelink, content, title } = payload;
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const result = await Post.create(
+            [
+                {
+                    bannerimg,
+                    title,
+                    youtubelink,
+                    content
+                }
+            ],
+            { session }
+        );
+
+        const imagesWithPostId = images.map((img: any) => (
+            {
+                url: img,
+                postId: result[0]!._id
+            }
+        ));
+        console.log(imagesWithPostId)
+        await Image.create(
+            [imagesWithPostId],
+            { session }
+        )
+
+    } catch (error: any) {
+        await session.abortTransaction();
+        
+    }
+    finally {
+        session.endSession();
+    }
+
 };
 
 const updatePost = async ({ id, payload }: { id: string, payload: any }) => {
