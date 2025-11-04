@@ -30,7 +30,8 @@ const updatePost = handleAsync(
 const getPosts = handleAsync(
     async (req: Request, res: Response) => {
         const { limit, page } = req.query;
-        const numLimit = Number(limit);
+        let numLimit = 10;
+        if (limit) Number(limit);
         const numPage = Number(page);
         const data = await postService.getPosts({ numLimit, numPage });
 
